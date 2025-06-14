@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -98,6 +99,17 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-poppins;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Custom hover scale effect */
+@layer utilities {
+  .hover\:scale-103:hover {
+    transform: scale(1.03);
   }
 }
