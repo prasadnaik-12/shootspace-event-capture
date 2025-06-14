@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
@@ -8,6 +7,7 @@ const Navbar = () => {
 
   const navItems = [
     { name: 'Home', href: '/' },
+    { name: 'VibeSpace', href: '/vibespace' },
     { name: 'Explore', href: '#explore' },
     { name: 'Our Journey', href: '#journey' },
     { name: 'Pricing', href: '#pricing' },
