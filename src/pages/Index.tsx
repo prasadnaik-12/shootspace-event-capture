@@ -36,7 +36,7 @@ const Index = () => {
           
           <div className="text-center">
             <Link
-              to="/#explore"
+              to="/explore"
               className="bg-[#FF9E4F] text-[#5B3228] px-6 py-3 rounded-xl font-semibold hover:bg-[#e68834] transition-all duration-300"
             >
               Explore All Services

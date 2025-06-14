@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import VibeSpace from "./pages/VibeSpace";
+import Explore from "./pages/Explore";
 import SignIn from "./pages/SignIn";
 import BookNow from "./pages/BookNow";
 import NotFound from "./pages/NotFound";
@@ -21,6 +22,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/vibespace" element={<VibeSpace />} />
+          <Route path="/explore" element={<Explore />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/book" element={<BookNow />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
