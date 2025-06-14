@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import VibeSpace from "./pages/VibeSpace";
 import Explore from "./pages/Explore";
+import OurJourney from "./pages/OurJourney";
 import SignIn from "./pages/SignIn";
 import BookNow from "./pages/BookNow";
 import NotFound from "./pages/NotFound";

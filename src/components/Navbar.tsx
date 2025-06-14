@@ -9,7 +9,7 @@ const Navbar = () => {
     { name: 'Home', href: '/' },
     { name: 'VibeSpace', href: '/vibespace' },
     { name: 'Explore', href: '/explore' },
-    { name: 'Our Journey', href: '#journey' },
+    { name: 'Our Journey', href: '/journey' },
     { name: 'Pricing', href: '#pricing' },
     { name: 'Sign In', href: '/signin' },
   ];

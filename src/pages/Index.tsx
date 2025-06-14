@@ -114,7 +114,7 @@ const Index = () => {
           
           <div className="text-center">
             <Link
-              to="/#journey"
+              to="/journey"
               className="bg-[#5B3228] text-[#FFE5B4] px-6 py-3 rounded-xl font-semibold hover:bg-[#3d2219] transition-all duration-300"
             >
               View Full Journey
