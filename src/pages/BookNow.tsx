@@ -2,10 +2,18 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
-import { Calendar } from 'lucide-react';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Button } from '@/components/ui/button';
+import { format } from 'date-fns';
+import { CalendarIcon } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const BookNow = () => {
   const [formData, setFormData] = useState({
+    name: '',
+    phone: '',
+    email: '',
     eventType: '',
     date: '',
     time: '',
@@ -13,17 +21,19 @@ const BookNow = () => {
     plan: '',
     specialNotes: '',
   });
+  const [selectedDate, setSelectedDate] = useState<Date>();
   const { toast } = useToast();
 
   const eventTypes = ['Wedding', 'Birthday', 'Corporate', 'Fashion', 'Custom'];
   const plans = [
-    { name: '1 Hour Plan', price: '₹2,000+GST' },
-    { name: 'Half Day', price: '₹5,000+GST' }
+    { name: 'Basic', price: '₹2,000+GST', features: ['2 hours shoot', '1 edited reel', '15 edited portraits'] },
+    { name: 'Standard', price: '₹5,000+GST', features: ['Half day shoot', '3 edited reels', '30 edited portraits'] },
+    { name: 'Premium', price: '₹10,000+GST', features: ['Full day shoot', '5 edited reels', '50 edited portraits', 'Online gallery'] }
   ];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Booking submitted:', formData);
+    console.log('Booking submitted:', { ...formData, selectedDate });
     
     toast({
       title: "Booking Submitted!",
@@ -35,6 +45,14 @@ const BookNow = () => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
+    });
+  };
+
+  const handleDateSelect = (date: Date | undefined) => {
+    setSelectedDate(date);
+    setFormData({
+      ...formData,
+      date: date ? format(date, 'yyyy-MM-dd') : ''
     });
   };
 
@@ -55,6 +73,58 @@ const BookNow = () => {
 
         <div className="bg-white rounded-2xl border border-[#B55233] p-8 shadow-xl">
           <form onSubmit={handleSubmit} className="space-y-8">
+            {/* Personal Information */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium text-[#5B3228] mb-2">
+                  Full Name *
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  placeholder="Enter your full name"
+                  className="w-full px-4 py-3 border border-[#B55233] rounded-xl focus:ring-2 focus:ring-[#FF9E4F] focus:border-transparent transition-all duration-300"
+                  required
+                />
+              </div>
+
+              <div>
+                <label htmlFor="phone" className="block text-sm font-medium text-[#5B3228] mb-2">
+                  Phone Number *
+                </label>
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  placeholder="Enter your phone number"
+                  className="w-full px-4 py-3 border border-[#B55233] rounded-xl focus:ring-2 focus:ring-[#FF9E4F] focus:border-transparent transition-all duration-300"
+                  required
+                />
+              </div>
+
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-[#5B3228] mb-2">
+                  Email Address *
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  placeholder="Enter your email"
+                  className="w-full px-4 py-3 border border-[#B55233] rounded-xl focus:ring-2 focus:ring-[#FF9E4F] focus:border-transparent transition-all duration-300"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Event Details */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label htmlFor="eventType" className="block text-sm font-medium text-[#5B3228] mb-2">
@@ -99,23 +169,38 @@ const BookNow = () => {
               </div>
             </div>
 
+            {/* Date and Time */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="date" className="block text-sm font-medium text-[#5B3228] mb-2">
+                <label className="block text-sm font-medium text-[#5B3228] mb-2">
                   Event Date *
                 </label>
-                <div className="relative">
-                  <input
-                    type="date"
-                    id="date"
-                    name="date"
-                    value={formData.date}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-[#B55233] rounded-xl focus:ring-2 focus:ring-[#FF9E4F] focus:border-transparent transition-all duration-300"
-                    required
-                  />
-                  <Calendar className="absolute right-3 top-3 text-[#B55233] w-5 h-5" />
-                </div>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full px-4 py-3 border border-[#B55233] rounded-xl focus:ring-2 focus:ring-[#FF9E4F] focus:border-transparent transition-all duration-300 justify-start text-left font-normal bg-white hover:bg-gray-50",
+                        !selectedDate && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {selectedDate ? format(selectedDate, "PPP") : <span>Pick a date</span>}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={selectedDate}
+                      onSelect={handleDateSelect}
+                      disabled={(date) =>
+                        date < new Date() || date < new Date("1900-01-01")
+                      }
+                      initialFocus
+                      className="p-3 pointer-events-auto"
+                    />
+                  </PopoverContent>
+                </Popover>
               </div>
 
               <div>
@@ -134,6 +219,7 @@ const BookNow = () => {
               </div>
             </div>
 
+            {/* Location */}
             <div>
               <label htmlFor="location" className="block text-sm font-medium text-[#5B3228] mb-2">
                 Event Location *
@@ -150,6 +236,7 @@ const BookNow = () => {
               />
             </div>
 
+            {/* Special Notes */}
             <div>
               <label htmlFor="specialNotes" className="block text-sm font-medium text-[#5B3228] mb-2">
                 Special Notes (Optional)
@@ -165,6 +252,7 @@ const BookNow = () => {
               ></textarea>
             </div>
 
+            {/* Submit Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
                 type="submit"
