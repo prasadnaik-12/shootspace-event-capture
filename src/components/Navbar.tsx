@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, User, LogOut } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
@@ -10,6 +10,12 @@ const Navbar = () => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const { user, signOut } = useAuth();
   const { toast } = useToast();
+  const location = useLocation();
+
+  // Don't show navbar on dashboard page
+  if (location.pathname === '/dashboard') {
+    return null;
+  }
 
   const handleSignOut = async () => {
     const { error } = await signOut();
@@ -41,7 +47,7 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent hover:scale-105 transition-transform duration-300">
+          <Link to={user ? "/dashboard" : "/"} className="text-2xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent hover:scale-105 transition-transform duration-300">
             ShootSpace
           </Link>
 
@@ -73,6 +79,14 @@ const Navbar = () => {
                       <p className="text-sm text-gray-600">Signed in as:</p>
                       <p className="text-sm font-medium text-gray-800 truncate">{user.email}</p>
                     </div>
+                    <Link
+                      to="/dashboard"
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 flex items-center space-x-2 transition-colors duration-200"
+                      onClick={() => setShowUserMenu(false)}
+                    >
+                      <User size={16} />
+                      <span>Dashboard</span>
+                    </Link>
                     <button
                       onClick={handleSignOut}
                       className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 flex items-center space-x-2 transition-colors duration-200"
@@ -129,6 +143,14 @@ const Navbar = () => {
               {user ? (
                 <div className="px-3 py-2 border-t border-gray-100 mt-2">
                   <p className="text-sm text-gray-600 mb-2">Signed in as: {user.email}</p>
+                  <Link
+                    to="/dashboard"
+                    className="flex items-center space-x-2 text-gray-700 hover:text-orange-600 font-medium transition-colors duration-300 mb-2"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <User size={16} />
+                    <span>Dashboard</span>
+                  </Link>
                   <button
                     onClick={handleSignOut}
                     className="flex items-center space-x-2 text-gray-700 hover:text-orange-600 font-medium transition-colors duration-300"
