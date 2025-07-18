@@ -11,6 +11,7 @@ import SignIn from "./pages/SignIn";
 import OurJourney from "./pages/OurJourney";
 import Explore from "./pages/Explore";
 import VibeSpace from "./pages/VibeSpace";
+import Pricing from "./pages/Pricing";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,6 +30,7 @@ const App = () => (
             <Route path="/our-journey" element={<OurJourney />} />
             <Route path="/explore" element={<Explore />} />
             <Route path="/vibe-space" element={<VibeSpace />} />
+            <Route path="/pricing" element={<Pricing />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

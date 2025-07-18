@@ -29,9 +29,11 @@ const Navbar = () => {
   };
 
   const navLinks = [
+    { name: 'Home', href: '/' },
     { name: 'Our Journey', href: '/our-journey' },
     { name: 'Explore', href: '/explore' },
     { name: 'VibeSpace', href: '/vibe-space' },
+    { name: 'Pricing', href: '/pricing' },
   ];
 
   return (
