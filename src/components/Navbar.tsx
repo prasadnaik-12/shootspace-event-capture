@@ -1,13 +1,21 @@
 
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, User, LogOut } from 'lucide-react';
+import { Menu, X, User, LogOut, UserCircle, BookOpen, Settings } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [showUserMenu, setShowUserMenu] = useState(false);
   const { user, signOut } = useAuth();
   const { toast } = useToast();
   const location = useLocation();
@@ -31,7 +39,6 @@ const Navbar = () => {
         description: "You've been signed out successfully",
       });
     }
-    setShowUserMenu(false);
   };
 
   const navLinks = [
@@ -41,6 +48,13 @@ const Navbar = () => {
     { name: 'VibeSpace', href: '/vibe-space' },
     { name: 'Pricing', href: '/pricing' },
   ];
+
+  const getUserInitials = () => {
+    if (user?.email) {
+      return user.email.charAt(0).toUpperCase();
+    }
+    return 'U';
+  };
 
   return (
     <nav className="bg-white/95 backdrop-blur-sm shadow-lg sticky top-0 z-50 border-b border-orange-100">
@@ -64,38 +78,50 @@ const Navbar = () => {
             ))}
             
             {user ? (
-              <div className="relative">
-                <button
-                  onClick={() => setShowUserMenu(!showUserMenu)}
-                  className="flex items-center space-x-2 text-gray-700 hover:text-orange-600 font-medium transition-colors duration-300"
-                >
-                  <User size={20} />
-                  <span>Account</span>
-                </button>
-                
-                {showUserMenu && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-orange-100 py-2">
-                    <div className="px-4 py-2 border-b border-gray-100">
-                      <p className="text-sm text-gray-600">Signed in as:</p>
-                      <p className="text-sm font-medium text-gray-800 truncate">{user.email}</p>
-                    </div>
-                    <Link
-                      to="/dashboard"
-                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 flex items-center space-x-2 transition-colors duration-200"
-                      onClick={() => setShowUserMenu(false)}
-                    >
-                      <User size={16} />
-                      <span>Dashboard</span>
-                    </Link>
-                    <button
-                      onClick={handleSignOut}
-                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 flex items-center space-x-2 transition-colors duration-200"
-                    >
-                      <LogOut size={16} />
+              <div className="flex items-center space-x-4">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Avatar className="cursor-pointer hover:ring-2 hover:ring-orange-500 transition-all duration-200">
+                      <AvatarFallback className="bg-gradient-to-r from-orange-500 to-red-500 text-white font-semibold">
+                        {getUserInitials()}
+                      </AvatarFallback>
+                    </Avatar>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-56" align="end">
+                    <DropdownMenuLabel className="font-normal">
+                      <div className="flex flex-col space-y-1">
+                        <p className="text-sm font-medium leading-none">My Account</p>
+                        <p className="text-xs leading-none text-muted-foreground truncate">
+                          {user.email}
+                        </p>
+                      </div>
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link to="/profile" className="flex items-center cursor-pointer">
+                        <UserCircle className="mr-2 h-4 w-4" />
+                        <span>View Profile</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/my-bookings" className="flex items-center cursor-pointer">
+                        <BookOpen className="mr-2 h-4 w-4" />
+                        <span>My Bookings</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/settings" className="flex items-center cursor-pointer">
+                        <Settings className="mr-2 h-4 w-4" />
+                        <span>Settings</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
+                      <LogOut className="mr-2 h-4 w-4" />
                       <span>Sign Out</span>
-                    </button>
-                  </div>
-                )}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             ) : (
               <Link
@@ -144,12 +170,28 @@ const Navbar = () => {
                 <div className="px-3 py-2 border-t border-gray-100 mt-2">
                   <p className="text-sm text-gray-600 mb-2">Signed in as: {user.email}</p>
                   <Link
-                    to="/dashboard"
+                    to="/profile"
                     className="flex items-center space-x-2 text-gray-700 hover:text-orange-600 font-medium transition-colors duration-300 mb-2"
                     onClick={() => setIsOpen(false)}
                   >
-                    <User size={16} />
-                    <span>Dashboard</span>
+                    <UserCircle size={16} />
+                    <span>View Profile</span>
+                  </Link>
+                  <Link
+                    to="/my-bookings"
+                    className="flex items-center space-x-2 text-gray-700 hover:text-orange-600 font-medium transition-colors duration-300 mb-2"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <BookOpen size={16} />
+                    <span>My Bookings</span>
+                  </Link>
+                  <Link
+                    to="/settings"
+                    className="flex items-center space-x-2 text-gray-700 hover:text-orange-600 font-medium transition-colors duration-300 mb-2"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <Settings size={16} />
+                    <span>Settings</span>
                   </Link>
                   <button
                     onClick={handleSignOut}
