@@ -6,14 +6,18 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { User, Mail, Phone, Calendar, Save } from 'lucide-react';
+import { User, Mail, Phone, Calendar, Save, Camera } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Navbar from '@/components/Navbar';
 
 interface Profile {
   id: string;
   name: string | null;
   phone: string | null;
+  about: string | null;
+  avatar_url: string | null;
   created_at: string;
 }
 
@@ -26,6 +30,7 @@ const Profile = () => {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
+    about: '',
   });
 
   useEffect(() => {
@@ -51,6 +56,7 @@ const Profile = () => {
         setFormData({
           name: data.name || '',
           phone: data.phone || '',
+          about: data.about || '',
         });
       }
     } catch (error) {
@@ -72,6 +78,7 @@ const Profile = () => {
           id: user.id,
           name: formData.name,
           phone: formData.phone,
+          about: formData.about,
           updated_at: new Date().toISOString(),
         });
 
@@ -94,12 +101,22 @@ const Profile = () => {
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
+  };
+
+  const getInitials = (name: string | null, email: string | undefined) => {
+    if (name) {
+      return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+    }
+    if (email) {
+      return email[0].toUpperCase();
+    }
+    return 'U';
   };
 
   if (loading) {
@@ -120,21 +137,47 @@ const Profile = () => {
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50">
       <Navbar />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-8">Profile Settings</h1>
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">PROFILE</h1>
+          <p className="text-gray-600 text-sm">MANAGE YOUR PROFILE</p>
+        </div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Profile Form */}
-          <Card className="bg-white/60 backdrop-blur-sm border-orange-200/50">
+          <Card className="bg-white/80 backdrop-blur-sm border-orange-200/50">
             <CardHeader>
-              <CardTitle className="text-lg font-semibold text-gray-800 flex items-center space-x-2">
-                <User size={20} />
-                <span>Personal Information</span>
+              <CardTitle className="text-lg font-semibold text-gray-800 mb-4">
+                BASIC INFORMATION
               </CardTitle>
+              
+              {/* Avatar Section */}
+              <div className="flex items-center space-x-4 mb-6 pb-6 border-b border-gray-200">
+                <Avatar className="w-16 h-16">
+                  <AvatarImage src={profile?.avatar_url || ''} />
+                  <AvatarFallback className="bg-orange-100 text-orange-600 text-lg font-semibold">
+                    {getInitials(profile?.name, user?.email)}
+                  </AvatarFallback>
+                </Avatar>
+                <div>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    className="flex items-center space-x-2 border-orange-200 hover:border-orange-300"
+                  >
+                    <Camera size={16} />
+                    <span>Change Avatar</span>
+                  </Button>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Or drag and drop an image anywhere on the page
+                  </p>
+                </div>
+              </div>
             </CardHeader>
+            
             <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="name" className="text-sm font-semibold text-gray-700">
+                  <Label htmlFor="name" className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
                     Full Name
                   </Label>
                   <Input
@@ -143,13 +186,13 @@ const Profile = () => {
                     type="text"
                     value={formData.name}
                     onChange={handleInputChange}
-                    className="border-orange-200 focus:border-orange-500 focus:ring-orange-500"
-                    placeholder="Enter your full name"
+                    className="border-gray-300 focus:border-orange-500 focus:ring-orange-500 rounded-lg"
+                    placeholder=""
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="phone" className="text-sm font-semibold text-gray-700">
+                  <Label htmlFor="phone" className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
                     Phone Number
                   </Label>
                   <Input
@@ -158,15 +201,29 @@ const Profile = () => {
                     type="tel"
                     value={formData.phone}
                     onChange={handleInputChange}
-                    className="border-orange-200 focus:border-orange-500 focus:ring-orange-500"
-                    placeholder="Enter your phone number"
+                    className="border-gray-300 focus:border-orange-500 focus:ring-orange-500 rounded-lg"
+                    placeholder=""
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="about" className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
+                    About
+                  </Label>
+                  <Textarea
+                    id="about"
+                    name="about"
+                    value={formData.about}
+                    onChange={handleInputChange}
+                    className="border-gray-300 focus:border-orange-500 focus:ring-orange-500 rounded-lg min-h-[100px] resize-none"
+                    placeholder=""
                   />
                 </div>
 
                 <Button
                   type="submit"
                   disabled={saving}
-                  className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white hover:from-orange-600 hover:to-red-600 transition-all duration-300"
+                  className="bg-gray-800 hover:bg-gray-900 text-white px-8 py-2 rounded-lg uppercase tracking-wide text-sm font-medium"
                 >
                   {saving ? (
                     <div className="flex items-center space-x-2">
@@ -174,10 +231,7 @@ const Profile = () => {
                       <span>Saving...</span>
                     </div>
                   ) : (
-                    <div className="flex items-center space-x-2">
-                      <Save size={16} />
-                      <span>Save Changes</span>
-                    </div>
+                    'Save Changes'
                   )}
                 </Button>
               </form>
@@ -185,39 +239,44 @@ const Profile = () => {
           </Card>
 
           {/* Account Info */}
-          <Card className="bg-white/60 backdrop-blur-sm border-orange-200/50">
+          <Card className="bg-white/80 backdrop-blur-sm border-orange-200/50">
             <CardHeader>
-              <CardTitle className="text-lg font-semibold text-gray-800">
+              <CardTitle className="text-lg font-semibold text-gray-800 uppercase tracking-wide">
                 Account Information
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center space-x-3 p-3 bg-orange-50 rounded-lg border border-orange-200">
-                <Mail className="text-orange-600" size={20} />
-                <div>
-                  <p className="text-sm font-medium text-gray-700">Email Address</p>
-                  <p className="text-sm text-gray-600">{user?.email}</p>
-                </div>
+            <CardContent className="space-y-6">
+              <div>
+                <Label className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-2 block">
+                  Email Address
+                </Label>
+                <Input
+                  value={user?.email || ''}
+                  readOnly
+                  className="border-gray-300 bg-gray-50 rounded-lg"
+                />
               </div>
 
-              {profile?.phone && (
-                <div className="flex items-center space-x-3 p-3 bg-orange-50 rounded-lg border border-orange-200">
-                  <Phone className="text-orange-600" size={20} />
-                  <div>
-                    <p className="text-sm font-medium text-gray-700">Phone Number</p>
-                    <p className="text-sm text-gray-600">{profile.phone}</p>
-                  </div>
-                </div>
-              )}
+              <div>
+                <Label className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-2 block">
+                  Phone Number
+                </Label>
+                <Input
+                  value={profile?.phone || ''}
+                  readOnly
+                  className="border-gray-300 bg-gray-50 rounded-lg"
+                />
+              </div>
 
-              <div className="flex items-center space-x-3 p-3 bg-orange-50 rounded-lg border border-orange-200">
-                <Calendar className="text-orange-600" size={20} />
-                <div>
-                  <p className="text-sm font-medium text-gray-700">Member Since</p>
-                  <p className="text-sm text-gray-600">
-                    {profile?.created_at ? new Date(profile.created_at).toLocaleDateString() : 'N/A'}
-                  </p>
-                </div>
+              <div>
+                <Label className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-2 block">
+                  Last Signed In
+                </Label>
+                <Input
+                  value={profile?.created_at ? new Date(profile.created_at).toLocaleDateString() : 'N/A'}
+                  readOnly
+                  className="border-gray-300 bg-gray-50 rounded-lg"
+                />
               </div>
             </CardContent>
           </Card>
