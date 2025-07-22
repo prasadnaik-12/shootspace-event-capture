@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -11,7 +12,6 @@ import OurJourney from "./pages/OurJourney";
 import Explore from "./pages/Explore";
 import VibeSpace from "./pages/VibeSpace";
 import Pricing from "./pages/Pricing";
-import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import MyBookings from "./pages/MyBookings";
 import Settings from "./pages/Settings";
@@ -41,12 +41,10 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 };
 
 const AppRoutes = () => {
-  const { user } = useAuth();
-
   return (
     <Routes>
-      <Route path="/" element={user ? <Navigate to="/dashboard" replace /> : <Index />} />
-      <Route path="/signin" element={user ? <Navigate to="/dashboard" replace /> : <SignIn />} />
+      <Route path="/" element={<Index />} />
+      <Route path="/signin" element={<SignIn />} />
       <Route path="/our-journey" element={<OurJourney />} />
       <Route path="/explore" element={<Explore />} />
       <Route path="/vibe-space" element={<VibeSpace />} />
@@ -56,14 +54,6 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <BookNow />
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/dashboard" 
-        element={
-          <ProtectedRoute>
-            <Dashboard />
           </ProtectedRoute>
         } 
       />

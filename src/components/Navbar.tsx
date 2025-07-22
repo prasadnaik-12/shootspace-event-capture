@@ -20,11 +20,6 @@ const Navbar = () => {
   const { toast } = useToast();
   const location = useLocation();
 
-  // Don't show navbar on dashboard page
-  if (location.pathname === '/dashboard') {
-    return null;
-  }
-
   const handleSignOut = async () => {
     const { error } = await signOut();
     if (error) {
@@ -61,7 +56,7 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link to={user ? "/dashboard" : "/"} className="text-2xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent hover:scale-105 transition-transform duration-300">
+          <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent hover:scale-105 transition-transform duration-300">
             ShootSpace
           </Link>
 
