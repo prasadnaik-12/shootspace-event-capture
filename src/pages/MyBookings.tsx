@@ -4,7 +4,10 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, Clock, MapPin, Camera, Users } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { Calendar, Clock, MapPin, Camera, Users, Eye, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Navbar from '@/components/Navbar';
 
@@ -53,6 +56,32 @@ const MyBookings = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const cancelBooking = async (bookingId: string) => {
+    try {
+      const { error } = await supabase
+        .from('bookings')
+        .update({ status: 'cancelled' })
+        .eq('id', bookingId)
+        .eq('user_id', user?.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Booking Cancelled",
+        description: "Your booking has been cancelled successfully.",
+      });
+
+      // Refresh bookings
+      fetchBookings();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to cancel booking",
+        variant: "destructive"
+      });
     }
   };
 
@@ -154,6 +183,90 @@ const MyBookings = () => {
                       <p className="text-sm text-gray-700">{booking.special_notes}</p>
                     </div>
                   )}
+
+                  <div className="flex gap-2 mt-4">
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" size="sm" className="flex-1">
+                          <Eye size={16} className="mr-1" />
+                          View Booking
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="max-w-md">
+                        <DialogHeader>
+                          <DialogTitle>Booking Details</DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                          <div>
+                            <p className="font-semibold text-gray-700">Event Type:</p>
+                            <p className="capitalize">{booking.event_type.replace('_', ' ')}</p>
+                          </div>
+                          <div>
+                            <p className="font-semibold text-gray-700">Name:</p>
+                            <p>{booking.name}</p>
+                          </div>
+                          <div>
+                            <p className="font-semibold text-gray-700">Email:</p>
+                            <p>{booking.email}</p>
+                          </div>
+                          <div>
+                            <p className="font-semibold text-gray-700">Phone:</p>
+                            <p>{booking.phone}</p>
+                          </div>
+                          <div>
+                            <p className="font-semibold text-gray-700">Date & Time:</p>
+                            <p>{new Date(booking.event_date).toLocaleDateString()} at {booking.event_time}</p>
+                          </div>
+                          <div>
+                            <p className="font-semibold text-gray-700">Location:</p>
+                            <p>{booking.location}</p>
+                          </div>
+                          <div>
+                            <p className="font-semibold text-gray-700">Plan:</p>
+                            <p className="capitalize">{booking.plan} Plan</p>
+                          </div>
+                          <div>
+                            <p className="font-semibold text-gray-700">Status:</p>
+                            <Badge className={getStatusColor(booking.status)}>{booking.status}</Badge>
+                          </div>
+                          {booking.special_notes && (
+                            <div>
+                              <p className="font-semibold text-gray-700">Special Notes:</p>
+                              <p>{booking.special_notes}</p>
+                            </div>
+                          )}
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+
+                    {booking.status !== 'cancelled' && (
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="destructive" size="sm" className="flex-1">
+                            <X size={16} className="mr-1" />
+                            Cancel
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Cancel Booking</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to cancel this booking? This action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Keep Booking</AlertDialogCancel>
+                            <AlertDialogAction 
+                              onClick={() => cancelBooking(booking.id)}
+                              className="bg-red-600 hover:bg-red-700"
+                            >
+                              Cancel Booking
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             ))}

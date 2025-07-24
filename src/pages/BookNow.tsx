@@ -111,19 +111,8 @@ const BookNow = () => {
         description: "We'll contact you soon to confirm your booking details.",
       });
 
-      // Reset form
-      setFormData({
-        name: '',
-        phone: '',
-        email: '',
-        eventType: '',
-        date: '',
-        time: '',
-        location: '',
-        plan: '',
-        specialNotes: '',
-      });
-      setSelectedDate(undefined);
+      // Redirect to My Bookings
+      navigate('/my-bookings');
 
     } catch (error) {
       console.error('Booking error:', error);
