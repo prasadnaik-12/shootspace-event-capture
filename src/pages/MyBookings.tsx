@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -144,132 +143,148 @@ const MyBookings = () => {
             </CardContent>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {bookings.map((booking) => (
-              <Card key={booking.id} className="bg-white/60 backdrop-blur-sm border-orange-200/50 hover:shadow-lg transition-all duration-300 hover:scale-105">
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg font-semibold text-gray-800 capitalize">
-                      {booking.event_type.replace('_', ' ')}
-                    </CardTitle>
-                    <Badge className={getStatusColor(booking.status)}>
-                      {booking.status}
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="flex items-center space-x-2 text-gray-600">
-                    <Calendar size={16} />
-                    <span className="text-sm">{new Date(booking.event_date).toLocaleDateString()}</span>
-                  </div>
-                  
-                  <div className="flex items-center space-x-2 text-gray-600">
-                    <Clock size={16} />
-                    <span className="text-sm">{booking.event_time}</span>
-                  </div>
-                  
-                  <div className="flex items-center space-x-2 text-gray-600">
-                    <MapPin size={16} />
-                    <span className="text-sm">{booking.location}</span>
-                  </div>
-                  
-                  <div className="flex items-center space-x-2 text-gray-600">
-                    <Users size={16} />
-                    <span className="text-sm capitalize">{booking.plan} Plan</span>
-                  </div>
+          <div className="space-y-8">
+            {/* Booking Sections */}
+            {['confirmed', 'pending', 'cancelled'].map((status) => {
+              const statusBookings = bookings.filter(booking => booking.status === status);
+              
+              if (statusBookings.length === 0) return null;
+              
+              return (
+                <div key={status} className="mb-8">
+                  <h2 className="text-2xl font-bold text-gray-800 mb-4 uppercase tracking-wide">
+                    {status} Bookings ({statusBookings.length})
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {statusBookings.map((booking) => (
+                      <Card key={booking.id} className="bg-white/60 backdrop-blur-sm border-orange-200/50 hover:shadow-lg transition-all duration-300 hover:scale-105">
+                        <CardHeader className="pb-3">
+                          <div className="flex items-center justify-between">
+                            <CardTitle className="text-lg font-semibold text-gray-800 capitalize">
+                              {booking.event_type.replace('_', ' ')}
+                            </CardTitle>
+                            <Badge className={getStatusColor(booking.status)}>
+                              {booking.status}
+                            </Badge>
+                          </div>
+                        </CardHeader>
+                        <CardContent className="space-y-3">
+                          <div className="flex items-center space-x-2 text-gray-600">
+                            <Calendar size={16} />
+                            <span className="text-sm">{new Date(booking.event_date).toLocaleDateString()}</span>
+                          </div>
+                          
+                          <div className="flex items-center space-x-2 text-gray-600">
+                            <Clock size={16} />
+                            <span className="text-sm">{booking.event_time}</span>
+                          </div>
+                          
+                          <div className="flex items-center space-x-2 text-gray-600">
+                            <MapPin size={16} />
+                            <span className="text-sm">{booking.location}</span>
+                          </div>
+                          
+                          <div className="flex items-center space-x-2 text-gray-600">
+                            <Users size={16} />
+                            <span className="text-sm capitalize">{booking.plan} Plan</span>
+                          </div>
 
-                  {booking.special_notes && (
-                    <div className="mt-3 p-3 bg-orange-50 rounded-lg border border-orange-200">
-                      <p className="text-sm text-gray-700">{booking.special_notes}</p>
-                    </div>
-                  )}
-
-                  <div className="flex gap-2 mt-4">
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button variant="outline" size="sm" className="flex-1">
-                          <Eye size={16} className="mr-1" />
-                          View Booking
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="max-w-md">
-                        <DialogHeader>
-                          <DialogTitle>Booking Details</DialogTitle>
-                        </DialogHeader>
-                        <div className="space-y-4">
-                          <div>
-                            <p className="font-semibold text-gray-700">Event Type:</p>
-                            <p className="capitalize">{booking.event_type.replace('_', ' ')}</p>
-                          </div>
-                          <div>
-                            <p className="font-semibold text-gray-700">Name:</p>
-                            <p>{booking.name}</p>
-                          </div>
-                          <div>
-                            <p className="font-semibold text-gray-700">Email:</p>
-                            <p>{booking.email}</p>
-                          </div>
-                          <div>
-                            <p className="font-semibold text-gray-700">Phone:</p>
-                            <p>{booking.phone}</p>
-                          </div>
-                          <div>
-                            <p className="font-semibold text-gray-700">Date & Time:</p>
-                            <p>{new Date(booking.event_date).toLocaleDateString()} at {booking.event_time}</p>
-                          </div>
-                          <div>
-                            <p className="font-semibold text-gray-700">Location:</p>
-                            <p>{booking.location}</p>
-                          </div>
-                          <div>
-                            <p className="font-semibold text-gray-700">Plan:</p>
-                            <p className="capitalize">{booking.plan} Plan</p>
-                          </div>
-                          <div>
-                            <p className="font-semibold text-gray-700">Status:</p>
-                            <Badge className={getStatusColor(booking.status)}>{booking.status}</Badge>
-                          </div>
                           {booking.special_notes && (
-                            <div>
-                              <p className="font-semibold text-gray-700">Special Notes:</p>
-                              <p>{booking.special_notes}</p>
+                            <div className="mt-3 p-3 bg-orange-50 rounded-lg border border-orange-200">
+                              <p className="text-sm text-gray-700">{booking.special_notes}</p>
                             </div>
                           )}
-                        </div>
-                      </DialogContent>
-                    </Dialog>
 
-                    {booking.status !== 'cancelled' && (
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button variant="destructive" size="sm" className="flex-1">
-                            <X size={16} className="mr-1" />
-                            Cancel
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Cancel Booking</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Are you sure you want to cancel this booking? This action cannot be undone.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Keep Booking</AlertDialogCancel>
-                            <AlertDialogAction 
-                              onClick={() => cancelBooking(booking.id)}
-                              className="bg-red-600 hover:bg-red-700"
-                            >
-                              Cancel Booking
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    )}
+                          <div className="flex gap-2 mt-4">
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button variant="outline" size="sm" className="flex-1">
+                                  <Eye size={16} className="mr-1" />
+                                  View Booking
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent className="max-w-md">
+                                <DialogHeader>
+                                  <DialogTitle>Booking Details</DialogTitle>
+                                </DialogHeader>
+                                <div className="space-y-4">
+                                  <div>
+                                    <p className="font-semibold text-gray-700">Event Type:</p>
+                                    <p className="capitalize">{booking.event_type.replace('_', ' ')}</p>
+                                  </div>
+                                  <div>
+                                    <p className="font-semibold text-gray-700">Name:</p>
+                                    <p>{booking.name}</p>
+                                  </div>
+                                  <div>
+                                    <p className="font-semibold text-gray-700">Email:</p>
+                                    <p>{booking.email}</p>
+                                  </div>
+                                  <div>
+                                    <p className="font-semibold text-gray-700">Phone:</p>
+                                    <p>{booking.phone}</p>
+                                  </div>
+                                  <div>
+                                    <p className="font-semibold text-gray-700">Date & Time:</p>
+                                    <p>{new Date(booking.event_date).toLocaleDateString()} at {booking.event_time}</p>
+                                  </div>
+                                  <div>
+                                    <p className="font-semibold text-gray-700">Location:</p>
+                                    <p>{booking.location}</p>
+                                  </div>
+                                  <div>
+                                    <p className="font-semibold text-gray-700">Plan:</p>
+                                    <p className="capitalize">{booking.plan} Plan</p>
+                                  </div>
+                                  <div>
+                                    <p className="font-semibold text-gray-700">Status:</p>
+                                    <Badge className={getStatusColor(booking.status)}>{booking.status}</Badge>
+                                  </div>
+                                  {booking.special_notes && (
+                                    <div>
+                                      <p className="font-semibold text-gray-700">Special Notes:</p>
+                                      <p>{booking.special_notes}</p>
+                                    </div>
+                                  )}
+                                </div>
+                              </DialogContent>
+                            </Dialog>
+
+                            {booking.status !== 'cancelled' && (
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button variant="destructive" size="sm" className="flex-1">
+                                    <X size={16} className="mr-1" />
+                                    Cancel
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Cancel Booking</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      Are you sure you want to cancel this booking? This action cannot be undone.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Keep Booking</AlertDialogCancel>
+                                    <AlertDialogAction 
+                                      onClick={() => cancelBooking(booking.id)}
+                                      className="bg-red-600 hover:bg-red-700"
+                                    >
+                                      Cancel Booking
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            )}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
                   </div>
-                </CardContent>
-              </Card>
-            ))}
+                </div>
+              );
+            })}
           </div>
         )}
       </div>

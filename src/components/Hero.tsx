@@ -1,7 +1,9 @@
 
 import { Link } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
 
 const Hero = () => {
+  const { user } = useAuth();
   return (
     <section className="bg-[#FF9E4F] min-h-screen flex items-center justify-center relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-[#FF9E4F] to-[#B55233] opacity-90"></div>
@@ -24,12 +26,14 @@ const Hero = () => {
           >
             Book Now
           </Link>
-          <Link
-            to="/signin"
-            className="bg-[#B55233] text-[#FFE5B4] px-8 py-4 rounded-2xl text-lg font-semibold hover:bg-[#953f2a] hover:scale-105 transition-all duration-300 shadow-lg"
-          >
-            Sign In
-          </Link>
+          {!user && (
+            <Link
+              to="/signin"
+              className="bg-[#B55233] text-[#FFE5B4] px-8 py-4 rounded-2xl text-lg font-semibold hover:bg-[#953f2a] hover:scale-105 transition-all duration-300 shadow-lg"
+            >
+              Sign In
+            </Link>
+          )}
         </div>
       </div>
       
