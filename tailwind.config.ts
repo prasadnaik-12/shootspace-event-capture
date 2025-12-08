@@ -65,6 +65,16 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				admin: {
+					bg: 'hsl(var(--admin-bg))',
+					sidebar: 'hsl(var(--admin-sidebar))',
+					'sidebar-foreground': 'hsl(var(--admin-sidebar-foreground))',
+					card: 'hsl(var(--admin-card))',
+					success: 'hsl(var(--admin-success))',
+					warning: 'hsl(var(--admin-warning))',
+					info: 'hsl(var(--admin-info))',
+					pending: 'hsl(var(--admin-pending))'
 				}
 			},
 			borderRadius: {
