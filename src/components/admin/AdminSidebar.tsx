@@ -8,7 +8,8 @@ import {
   LogOut,
   Camera,
   Menu,
-  X
+  X,
+  DollarSign
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
@@ -20,6 +21,7 @@ const navItems = [
   { icon: CalendarDays, label: 'Bookings', path: '/admin/bookings' },
   { icon: CalendarDays, label: 'Calendar', path: '/admin/calendar' },
   { icon: Users, label: 'Clients', path: '/admin/clients' },
+  { icon: DollarSign, label: 'Payments', path: '/admin/payments' },
   { icon: UserCog, label: 'Team', path: '/admin/team' },
   { icon: Settings, label: 'Settings', path: '/admin/settings' },
 ];

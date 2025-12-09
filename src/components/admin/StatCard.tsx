@@ -9,7 +9,7 @@ interface StatCardProps {
     value: number;
     isPositive: boolean;
   };
-  variant?: 'default' | 'success' | 'warning' | 'info' | 'pending';
+  variant?: 'default' | 'success' | 'warning' | 'info' | 'pending' | 'danger';
 }
 
 const variantStyles = {
@@ -18,6 +18,7 @@ const variantStyles = {
   warning: 'bg-admin-warning/10 border-admin-warning/20',
   info: 'bg-admin-info/10 border-admin-info/20',
   pending: 'bg-admin-pending/10 border-admin-pending/20',
+  danger: 'bg-destructive/10 border-destructive/20',
 };
 
 const iconStyles = {
@@ -26,6 +27,7 @@ const iconStyles = {
   warning: 'bg-admin-warning/20 text-admin-warning',
   info: 'bg-admin-info/20 text-admin-info',
   pending: 'bg-admin-pending/20 text-admin-pending',
+  danger: 'bg-destructive/20 text-destructive',
 };
 
 export const StatCard = ({ title, value, icon: Icon, trend, variant = 'default' }: StatCardProps) => {
