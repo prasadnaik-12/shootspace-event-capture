@@ -1,8 +1,9 @@
 
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, User, LogOut, UserCircle, BookOpen, Settings } from 'lucide-react';
+import { Menu, X, User, LogOut, UserCircle, BookOpen, Settings, LayoutDashboard } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { useAdmin } from '@/hooks/useAdmin';
 import { useToast } from '@/hooks/use-toast';
 import {
   DropdownMenu,
@@ -17,6 +18,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user, signOut } = useAuth();
+  const { isAdmin } = useAdmin();
   const { toast } = useToast();
   const location = useLocation();
 
@@ -92,6 +94,14 @@ const Navbar = () => {
                       </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
+                    {isAdmin && (
+                      <DropdownMenuItem asChild>
+                        <Link to="/admin" className="flex items-center cursor-pointer text-orange-600">
+                          <LayoutDashboard className="mr-2 h-4 w-4" />
+                          <span>Admin Dashboard</span>
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem asChild>
                       <Link to="/profile" className="flex items-center cursor-pointer">
                         <UserCircle className="mr-2 h-4 w-4" />
@@ -163,6 +173,16 @@ const Navbar = () => {
               
               {user ? (
                 <div className="px-3 py-2 border-t border-gray-100 mt-2">
+                  {isAdmin && (
+                    <Link
+                      to="/admin"
+                      className="flex items-center space-x-2 text-orange-600 font-semibold transition-colors duration-300 mb-2"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <LayoutDashboard size={16} />
+                      <span>Admin Dashboard</span>
+                    </Link>
+                  )}
                   <p className="text-sm text-gray-600 mb-2">Signed in as: {user.email}</p>
                   <Link
                     to="/profile"
