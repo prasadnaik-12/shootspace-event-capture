@@ -20,6 +20,7 @@ import { AdminDashboard } from "./pages/admin/AdminDashboard";
 import { AdminBookings } from "./pages/admin/AdminBookings";
 import { AdminCalendar } from "./pages/admin/AdminCalendar";
 import { AdminClients } from "./pages/admin/AdminClients";
+import AdminPayments from "./pages/admin/AdminPayments";
 import { AdminTeam } from "./pages/admin/AdminTeam";
 import { AdminSettings } from "./pages/admin/AdminSettings";
 
@@ -91,6 +92,7 @@ const AppRoutes = () => {
       <Route path="/admin/bookings" element={<AdminRoute><AdminBookings /></AdminRoute>} />
       <Route path="/admin/calendar" element={<AdminRoute><AdminCalendar /></AdminRoute>} />
       <Route path="/admin/clients" element={<AdminRoute><AdminClients /></AdminRoute>} />
+      <Route path="/admin/payments" element={<AdminRoute><AdminPayments /></AdminRoute>} />
       <Route path="/admin/team" element={<AdminRoute><AdminTeam /></AdminRoute>} />
       <Route path="/admin/settings" element={<AdminRoute><AdminSettings /></AdminRoute>} />
       
