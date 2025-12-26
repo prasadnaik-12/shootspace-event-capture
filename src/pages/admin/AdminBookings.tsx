@@ -85,6 +85,44 @@ export const AdminBookings = () => {
     }
   };
 
+  const sendWebhookNotification = async (booking: Booking, status: string) => {
+    try {
+      const webhookUrl = 'https://primary-production-5dc4.up.railway.app/webhook-test/booking/confirm';
+      
+      const payload = {
+        booking_id: booking.id,
+        name: booking.name,
+        email: booking.email,
+        phone: booking.phone,
+        event_date: booking.event_date,
+        event_time: booking.event_time,
+        event_type: booking.event_type,
+        location: booking.location,
+        plan: booking.plan,
+        special_notes: booking.special_notes,
+        assigned_to: booking.assigned_to,
+        status: status,
+        updated_at: new Date().toISOString(),
+      };
+
+      const response = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        console.error('Webhook notification failed:', response.statusText);
+      } else {
+        console.log('Webhook notification sent successfully');
+      }
+    } catch (error) {
+      console.error('Error sending webhook notification:', error);
+    }
+  };
+
   const updateBookingStatus = async (bookingId: string, status: string) => {
     try {
       const { error } = await supabase
@@ -93,6 +131,12 @@ export const AdminBookings = () => {
         .eq('id', bookingId);
 
       if (error) throw error;
+
+      // Find the booking to send to webhook
+      const booking = bookings.find(b => b.id === bookingId);
+      if (booking && (status === 'confirmed' || status === 'cancelled')) {
+        sendWebhookNotification(booking, status);
+      }
 
       setBookings(prev => 
         prev.map(b => b.id === bookingId ? { ...b, status } : b)
