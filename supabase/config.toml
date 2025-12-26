@@ -1,1 +1,4 @@
 project_id = "ogayqjlxidjifdzjnqnb"
+
+[functions.send-booking-webhook]
+verify_jwt = false
