@@ -87,8 +87,6 @@ export const AdminBookings = () => {
 
   const sendWebhookNotification = async (booking: Booking, status: string) => {
     try {
-      const webhookUrl = 'https://primary-production-5dc4.up.railway.app/webhook-test/booking/confirm';
-      
       const payload = {
         booking_id: booking.id,
         name: booking.name,
@@ -105,18 +103,16 @@ export const AdminBookings = () => {
         updated_at: new Date().toISOString(),
       };
 
-      const response = await fetch(webhookUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
+      console.log('Sending webhook via edge function:', payload);
+
+      const { data, error } = await supabase.functions.invoke('send-booking-webhook', {
+        body: payload,
       });
 
-      if (!response.ok) {
-        console.error('Webhook notification failed:', response.statusText);
+      if (error) {
+        console.error('Webhook notification failed:', error);
       } else {
-        console.log('Webhook notification sent successfully');
+        console.log('Webhook notification sent successfully:', data);
       }
     } catch (error) {
       console.error('Error sending webhook notification:', error);
