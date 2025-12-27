@@ -1,9 +1,9 @@
-
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, User, LogOut, UserCircle, BookOpen, Settings, LayoutDashboard } from 'lucide-react';
+import { Menu, X, User, LogOut, UserCircle, BookOpen, Settings, LayoutDashboard, Clock, Calendar, DollarSign } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useAdmin } from '@/hooks/useAdmin';
+import { useAdminStats } from '@/hooks/useAdminStats';
 import { useToast } from '@/hooks/use-toast';
 import {
   DropdownMenu,
@@ -19,6 +19,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user, signOut } = useAuth();
   const { isAdmin } = useAdmin();
+  const adminStats = useAdminStats(isAdmin);
   const { toast } = useToast();
   const location = useLocation();
 
@@ -95,12 +96,44 @@ const Navbar = () => {
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     {isAdmin && (
-                      <DropdownMenuItem asChild>
-                        <Link to="/admin" className="flex items-center cursor-pointer text-orange-600">
-                          <LayoutDashboard className="mr-2 h-4 w-4" />
-                          <span>Admin Dashboard</span>
-                        </Link>
-                      </DropdownMenuItem>
+                      <>
+                        <div className="px-2 py-2 space-y-2">
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="flex items-center text-muted-foreground">
+                              <Clock className="mr-1.5 h-3 w-3" />
+                              Pending
+                            </span>
+                            <span className="font-semibold text-orange-600">
+                              {adminStats.isLoading ? '...' : adminStats.pendingBookings}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="flex items-center text-muted-foreground">
+                              <Calendar className="mr-1.5 h-3 w-3" />
+                              Today
+                            </span>
+                            <span className="font-semibold text-blue-600">
+                              {adminStats.isLoading ? '...' : adminStats.todayBookings}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="flex items-center text-muted-foreground">
+                              <DollarSign className="mr-1.5 h-3 w-3" />
+                              Revenue
+                            </span>
+                            <span className="font-semibold text-green-600">
+                              ₹{adminStats.isLoading ? '...' : adminStats.totalRevenue.toLocaleString()}
+                            </span>
+                          </div>
+                        </div>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem asChild>
+                          <Link to="/admin" className="flex items-center cursor-pointer text-orange-600">
+                            <LayoutDashboard className="mr-2 h-4 w-4" />
+                            <span>Admin Dashboard</span>
+                          </Link>
+                        </DropdownMenuItem>
+                      </>
                     )}
                     {!isAdmin && (
                       <>
