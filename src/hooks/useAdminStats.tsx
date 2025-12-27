@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 interface AdminStats {
@@ -16,50 +16,81 @@ export const useAdminStats = (isAdmin: boolean) => {
     isLoading: true,
   });
 
+  const fetchStats = useCallback(async () => {
+    if (!isAdmin) return;
+    
+    try {
+      const today = new Date().toISOString().split('T')[0];
+
+      // Fetch pending bookings count
+      const { count: pendingCount } = await supabase
+        .from('bookings')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'pending');
+
+      // Fetch today's bookings count
+      const { count: todayCount } = await supabase
+        .from('bookings')
+        .select('*', { count: 'exact', head: true })
+        .eq('event_date', today);
+
+      // Fetch total revenue from completed payments
+      const { data: payments } = await supabase
+        .from('payments')
+        .select('amount')
+        .eq('status', 'completed');
+
+      const totalRevenue = payments?.reduce((sum, p) => sum + Number(p.amount), 0) || 0;
+
+      setStats({
+        pendingBookings: pendingCount || 0,
+        todayBookings: todayCount || 0,
+        totalRevenue,
+        isLoading: false,
+      });
+    } catch (error) {
+      console.error('Error fetching admin stats:', error);
+      setStats(prev => ({ ...prev, isLoading: false }));
+    }
+  }, [isAdmin]);
+
   useEffect(() => {
     if (!isAdmin) {
       setStats(prev => ({ ...prev, isLoading: false }));
       return;
     }
 
-    const fetchStats = async () => {
-      try {
-        const today = new Date().toISOString().split('T')[0];
-
-        // Fetch pending bookings count
-        const { count: pendingCount } = await supabase
-          .from('bookings')
-          .select('*', { count: 'exact', head: true })
-          .eq('status', 'pending');
-
-        // Fetch today's bookings count
-        const { count: todayCount } = await supabase
-          .from('bookings')
-          .select('*', { count: 'exact', head: true })
-          .eq('event_date', today);
-
-        // Fetch total revenue from completed payments
-        const { data: payments } = await supabase
-          .from('payments')
-          .select('amount')
-          .eq('status', 'completed');
-
-        const totalRevenue = payments?.reduce((sum, p) => sum + Number(p.amount), 0) || 0;
-
-        setStats({
-          pendingBookings: pendingCount || 0,
-          todayBookings: todayCount || 0,
-          totalRevenue,
-          isLoading: false,
-        });
-      } catch (error) {
-        console.error('Error fetching admin stats:', error);
-        setStats(prev => ({ ...prev, isLoading: false }));
-      }
-    };
-
     fetchStats();
-  }, [isAdmin]);
+
+    // Set up real-time subscription for bookings changes
+    const bookingsChannel = supabase
+      .channel('admin-stats-bookings')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'bookings' },
+        () => {
+          fetchStats();
+        }
+      )
+      .subscribe();
+
+    // Set up real-time subscription for payments changes
+    const paymentsChannel = supabase
+      .channel('admin-stats-payments')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'payments' },
+        () => {
+          fetchStats();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(bookingsChannel);
+      supabase.removeChannel(paymentsChannel);
+    };
+  }, [isAdmin, fetchStats]);
 
   return stats;
 };

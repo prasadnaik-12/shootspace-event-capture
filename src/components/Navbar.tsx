@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, User, LogOut, UserCircle, BookOpen, Settings, LayoutDashboard, Clock, Calendar, DollarSign } from 'lucide-react';
+import { Menu, X, User, LogOut, UserCircle, BookOpen, Settings, LayoutDashboard, Clock, Calendar, DollarSign, Bell } from 'lucide-react';
+import { Badge } from "@/components/ui/badge";
 import { useAuth } from '@/hooks/useAuth';
 import { useAdmin } from '@/hooks/useAdmin';
 import { useAdminStats } from '@/hooks/useAdminStats';
@@ -79,11 +80,20 @@ const Navbar = () => {
               <div className="flex items-center space-x-4">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Avatar className="cursor-pointer hover:ring-2 hover:ring-orange-500 transition-all duration-200">
-                      <AvatarFallback className="bg-gradient-to-r from-orange-500 to-red-500 text-white font-semibold">
-                        {getUserInitials()}
-                      </AvatarFallback>
-                    </Avatar>
+                    <div className="relative cursor-pointer">
+                      <Avatar className="hover:ring-2 hover:ring-orange-500 transition-all duration-200">
+                        <AvatarFallback className="bg-gradient-to-r from-orange-500 to-red-500 text-white font-semibold">
+                          {getUserInitials()}
+                        </AvatarFallback>
+                      </Avatar>
+                      {isAdmin && adminStats.pendingBookings > 0 && (
+                        <Badge 
+                          className="absolute -top-1 -right-1 h-5 min-w-[20px] flex items-center justify-center p-0 text-xs bg-red-500 hover:bg-red-500 border-2 border-white"
+                        >
+                          {adminStats.pendingBookings > 9 ? '9+' : adminStats.pendingBookings}
+                        </Badge>
+                      )}
+                    </div>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-56" align="end">
                     <DropdownMenuLabel className="font-normal">
@@ -220,6 +230,11 @@ const Navbar = () => {
                     >
                       <LayoutDashboard size={16} />
                       <span>Admin Dashboard</span>
+                      {adminStats.pendingBookings > 0 && (
+                        <Badge className="ml-auto h-5 min-w-[20px] flex items-center justify-center p-0 px-1.5 text-xs bg-red-500 hover:bg-red-500">
+                          {adminStats.pendingBookings}
+                        </Badge>
+                      )}
                     </Link>
                   )}
                   <p className="text-sm text-gray-600 mb-2">Signed in as: {user.email}</p>
