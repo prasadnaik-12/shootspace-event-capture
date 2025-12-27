@@ -102,24 +102,28 @@ const Navbar = () => {
                         </Link>
                       </DropdownMenuItem>
                     )}
-                    <DropdownMenuItem asChild>
-                      <Link to="/profile" className="flex items-center cursor-pointer">
-                        <UserCircle className="mr-2 h-4 w-4" />
-                        <span>View Profile</span>
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/my-bookings" className="flex items-center cursor-pointer">
-                        <BookOpen className="mr-2 h-4 w-4" />
-                        <span>My Bookings</span>
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/settings" className="flex items-center cursor-pointer">
-                        <Settings className="mr-2 h-4 w-4" />
-                        <span>Settings</span>
-                      </Link>
-                    </DropdownMenuItem>
+                    {!isAdmin && (
+                      <>
+                        <DropdownMenuItem asChild>
+                          <Link to="/profile" className="flex items-center cursor-pointer">
+                            <UserCircle className="mr-2 h-4 w-4" />
+                            <span>View Profile</span>
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link to="/my-bookings" className="flex items-center cursor-pointer">
+                            <BookOpen className="mr-2 h-4 w-4" />
+                            <span>My Bookings</span>
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link to="/settings" className="flex items-center cursor-pointer">
+                            <Settings className="mr-2 h-4 w-4" />
+                            <span>Settings</span>
+                          </Link>
+                        </DropdownMenuItem>
+                      </>
+                    )}
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
                       <LogOut className="mr-2 h-4 w-4" />
@@ -137,12 +141,14 @@ const Navbar = () => {
               </Link>
             )}
 
-            <Link
-              to="/book"
-              className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-2 rounded-full font-semibold hover:from-orange-600 hover:to-red-600 hover:scale-105 transition-all duration-300 shadow-lg"
-            >
-              Book Now
-            </Link>
+            {!isAdmin && (
+              <Link
+                to="/book"
+                className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-2 rounded-full font-semibold hover:from-orange-600 hover:to-red-600 hover:scale-105 transition-all duration-300 shadow-lg"
+              >
+                Book Now
+              </Link>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -184,30 +190,34 @@ const Navbar = () => {
                     </Link>
                   )}
                   <p className="text-sm text-gray-600 mb-2">Signed in as: {user.email}</p>
-                  <Link
-                    to="/profile"
-                    className="flex items-center space-x-2 text-gray-700 hover:text-orange-600 font-medium transition-colors duration-300 mb-2"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    <UserCircle size={16} />
-                    <span>View Profile</span>
-                  </Link>
-                  <Link
-                    to="/my-bookings"
-                    className="flex items-center space-x-2 text-gray-700 hover:text-orange-600 font-medium transition-colors duration-300 mb-2"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    <BookOpen size={16} />
-                    <span>My Bookings</span>
-                  </Link>
-                  <Link
-                    to="/settings"
-                    className="flex items-center space-x-2 text-gray-700 hover:text-orange-600 font-medium transition-colors duration-300 mb-2"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    <Settings size={16} />
-                    <span>Settings</span>
-                  </Link>
+                  {!isAdmin && (
+                    <>
+                      <Link
+                        to="/profile"
+                        className="flex items-center space-x-2 text-gray-700 hover:text-orange-600 font-medium transition-colors duration-300 mb-2"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        <UserCircle size={16} />
+                        <span>View Profile</span>
+                      </Link>
+                      <Link
+                        to="/my-bookings"
+                        className="flex items-center space-x-2 text-gray-700 hover:text-orange-600 font-medium transition-colors duration-300 mb-2"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        <BookOpen size={16} />
+                        <span>My Bookings</span>
+                      </Link>
+                      <Link
+                        to="/settings"
+                        className="flex items-center space-x-2 text-gray-700 hover:text-orange-600 font-medium transition-colors duration-300 mb-2"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        <Settings size={16} />
+                        <span>Settings</span>
+                      </Link>
+                    </>
+                  )}
                   <button
                     onClick={handleSignOut}
                     className="flex items-center space-x-2 text-gray-700 hover:text-orange-600 font-medium transition-colors duration-300"
@@ -226,13 +236,15 @@ const Navbar = () => {
                 </Link>
               )}
 
-              <Link
-                to="/book"
-                className="block mx-3 mt-4 bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-2 rounded-full font-semibold text-center hover:from-orange-600 hover:to-red-600 transition-all duration-300 shadow-lg"
-                onClick={() => setIsOpen(false)}
-              >
-                Book Now
-              </Link>
+              {!isAdmin && (
+                <Link
+                  to="/book"
+                  className="block mx-3 mt-4 bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-2 rounded-full font-semibold text-center hover:from-orange-600 hover:to-red-600 transition-all duration-300 shadow-lg"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Book Now
+                </Link>
+              )}
             </div>
           </div>
         )}
